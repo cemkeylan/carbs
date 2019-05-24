@@ -100,7 +100,7 @@ then
 		sudo pacman -R i3-wm
 	fi
 	yay -T ttf-material-icons-git | yay -S -
-	sudo $pacman i3-gaps polybar nextcloud-client entr clipit compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	sudo $pacman i3-gaps polybar nextcloud-client entr xautolock i3lock clipit compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
