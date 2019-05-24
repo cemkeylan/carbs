@@ -158,7 +158,7 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your browser:\n\n${YELLOW}1) Firefox (recommended if you are not familiar to vim)\n2) qutebrowser (a browser with vim-like controls)\n\nPlease choose: ${GREEN}"
+		printf "${BLUE}What would you prefer as your browser:\n\n${YELLOW}1) Firefox (recommended if you are not familiar to vim)\n2) qutebrowser (a browser with vim-like controls)\n3) midori (a lightweight browser that I use on my ancient netbook)\n\nPlease choose: ${GREEN}"
 		echo BROWSER INSTALLATION >> $CARBHOME/.log
 		read answer
 		printf "${YELLOW}"
@@ -177,6 +177,11 @@ then
 				printf "\n# Web Browser \nset \$brow qutebrowser" >> $HOME/.config/i3/config
 				break
 				;;
+			3)
+				echo Installing MIDORI | tee -a $CARBHOME/.log
+				sudo $pacman midori | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				BROWSER=midori
+				printf "\n# Web Browser \nset \$brow midori" >> $HOME/.config/i3/config
 			*)
 				echo -e "${RED}This is not a valid option"
 				sleep 2
