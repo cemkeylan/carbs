@@ -182,6 +182,8 @@ then
 				sudo $pacman midori | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				BROWSER=midori
 				printf "\n# Web Browser \nset \$brow midori" >> $HOME/.config/i3/config
+				break
+				;;
 			*)
 				echo -e "${RED}This is not a valid option"
 				sleep 2
