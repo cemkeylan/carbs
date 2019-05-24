@@ -13,11 +13,11 @@ case $1 in
 		fi
 		mkdir $HOME/fakehome
 		TEST=1
-		pacman="pacman -S"
+		pacman="pacman -T"
 		HOME=$HOME/fakehome
 		;;
 	*)
-		pacman="pacman -S -noconfirm"
+		pacman="pacman -T"
 		TEST=0
 		;;
 esac
@@ -95,7 +95,13 @@ then
 	then
 		sudo pacman -Syy
 	fi
-	sudo $pacman i3-gaps polybar nextcloud-client clipit compton terminator ttf-material-icons feh mpd xorg-xbacklight && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	if [ $(pacman -T i3-wm) != "i3-wm" ]
+	then	
+		sudo pacman -R i3-wm
+	fi
+	yay -T ttf-material-icons-git | yay -S -
+	sudo $pacman i3-gaps polybar nextcloud-client entr clipit compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
 	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/.log
@@ -124,7 +130,7 @@ then
 		esac
 	done
 	echo -e "${YELLOW}Compiling and installing dmenu" >> $CARBHOME/.log
-	if [ TEST = 0 ]
+	if [ $TEST = 0 ]
 	then
 		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log
 	else
@@ -159,14 +165,14 @@ then
 		case $answer in
 			1)
 				echo Installing FIREFOX | tee -a $CARBHOME/.log
-				sudo $pacman firefox && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman firefox | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				BROWSER=firefox
 				printf "\n# Web Browser \nset \$brow firefox" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
 				echo Installing QUTEBROWSER | tee -a $CARBHOME/.log
-				sudo $pacman qutebrowser && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman qutebrowser | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				BROWSER=qutebrowser
 				printf "\n# Web Browser \nset \$brow qutebrowser" >> $HOME/.config/i3/config
 				break
@@ -187,19 +193,19 @@ then
 		case $answer in
 			1)
 				echo Installing NCMPCPP | tee -a $CARBHOME/.log
-				sudo $pacman ncmpcpp && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman ncmpcpp | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n#Music Player \nset \$music \$term -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
 				break
 				;;
 			2)
 				echo Installing MOCP | tee -a $CARBHOME/.log
-				sudo $pacman moc && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman moc | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n#Music Player \nset \$music \$term -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Ario | tee -a $CARBHOME/.log
-				sudo $pacman ario && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman ario | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n#Music Player \nset \$music ario\n" >> $HOME/.config/i3/config
 				break
 				;;
@@ -222,19 +228,19 @@ then
 		case $answer in
 			1)
 				echo Installing lf | tee -a $CARBHOME/.log
-				yay -S lf && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				yay -T lf | yay -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n# File Manager \nset \$fm \$term -e \"lf && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
 				echo Installing Nemo | tee -a $CARBHOME/.log
-				sudo $pacman nemo && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman nemo | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n# File Manager \nset \$fm nemo\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Dolphin | tee -a $CARBHOME/.log
-				sudo $pacman dolphin && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman dolphin | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
 				printf "\n# File Manager \nset \$fm dolphin\n" >> $HOME/.config/i3/config
 				break
 				;;
@@ -244,7 +250,7 @@ then
 				;;
 		esac
 	done
-	if [ TEST = 0 ]
+	if [ $TEST = 0 ]
 	then
 		printf "${GREEN}The script is finished, should I restart your display manager?\n(yes/no) "
 		read answer
