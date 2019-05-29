@@ -98,6 +98,13 @@ then
 	then
 		sudo pacman -Syy
 	fi
+	pacman -T git | pacman -S -
+	if [ $(pacman -T yay) = "yay" ]
+	then
+		git clone https://aur.archlinux.org/yay.git
+		cd yay
+		makepkg -si
+	fi
 	if [ $(pacman -T i3-wm) != "i3-wm" ]
 	then	
 		sudo pacman -R i3-wm
