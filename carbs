@@ -39,6 +39,7 @@ that this is a brand new installation of Manjaro\n\n\nHere are your options:\n\n
 	if [ $(uname -m) != "x86_64" ]
 	then
 		printf "${RED}Warning! Your architechture does not seem to be 64-bit. \nIf you are using an ARM Processor, this script will not work as some of the requirements cannot be built in ARMv8 architechture.\nIf you have 32-bit architechture, installation will be fine, however, there are problems in the way compton works (it doesn't).${BLUE}"
+	fi
 	echo -e "Key       Option            Current"
 	echo -e " ${YELLOW}w)  Default Wallpapers      $WALLPAPER"
 	echo -e " ${YELLOW}i)    Tiling Desktop        $I3"
@@ -98,7 +99,7 @@ then
 	then
 		sudo pacman -Syy
 	fi
-	pacman -T git | pacman -S -
+	pacman -T git | sudo pacman -S -
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay.git
@@ -109,8 +110,8 @@ then
 	then	
 		sudo pacman -R i3-wm
 	fi
-	yay -T polybar clipit ttf-material-icons-git | yay -S -
-	sudo $pacman i3-gaps nextcloud-client entr xautolock i3lock compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	yay -T clipit ttf-material-icons-git | yay -S -
+	sudo $pacman i3-gaps ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation nextcloud-client entr xautolock i3lock compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && yay -T polybar | yay -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
@@ -142,7 +143,7 @@ then
 	echo -e "${YELLOW}Compiling and installing dmenu" >> $CARBHOME/.log
 	if [ $TEST = 0 ]
 	then
-		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log
+		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log && sleep 2
 	else
 		make && echo Skipping Installation because of dry run | tee -a $CARBHOME/.log
 	fi
@@ -211,13 +212,13 @@ then
 			1)
 				echo Installing NCMPCPP | tee -a $CARBHOME/.log
 				sudo $pacman ncmpcpp | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
-				printf "\n#Music Player \nset \$music \$term -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
+				printf "\n#Music Player \nset \$music terminator -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
 				break
 				;;
 			2)
 				echo Installing MOCP | tee -a $CARBHOME/.log
 				sudo $pacman moc | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
-				printf "\n#Music Player \nset \$music \$term -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
+				printf "\n#Music Player \nset \$music terminator -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
@@ -246,7 +247,7 @@ then
 			1)
 				echo Installing lf | tee -a $CARBHOME/.log
 				yay -T lf | yay -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
-				printf "\n# File Manager \nset \$fm \$term -e \"lf && exit\"\n" >> $HOME/.config/i3/config
+				printf "\n# File Manager \nset \$fm terminator -e \"lf && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
