@@ -36,6 +36,9 @@ do
 	printf "${BLUE}==================================================\n===     ======  =====       ===      =====      ==\n==  ===  ====    ====  ====  ==  ===  ===  ====  =\n=  =========  ==  ===  ====  ==  ====  ==  ====  =\n=  ========  ====  ==  ===   ==  ===  ====  ======\n=  ========  ====  ==      ====      =======  ====\n=  ========        ==  ====  ==  ===  ========  ==\n=  ========  ====  ==  ====  ==  ====  ==  ====  =\n==  ===  ==  ====  ==  ====  ==  ===  ===  ====  =\n===     ===  ====  ==  ====  ==      =====      ==\n==================================================\n"
 	printf "${BLUE}Welcome to Cem's Auto Rice Bootsrapper Script!\n\nPlease make sure
 that this is a brand new installation of Manjaro\n\n\nHere are your options:\n\n"
+	if [ $(uname -m) != "x86_64" ]
+	then
+		printf "${RED}Warning! Your architechture does not seem to be 64-bit. \nIf you are using an ARM Processor, this script will not work as some of the requirements cannot be built in ARMv8 architechture.\nIf you have 32-bit architechture, installation will be fine, however, there are problems in the way compton works (it doesn't).${BLUE}"
 	echo -e "Key       Option            Current"
 	echo -e " ${YELLOW}w)  Default Wallpapers      $WALLPAPER"
 	echo -e " ${YELLOW}i)    Tiling Desktop        $I3"
@@ -99,8 +102,8 @@ then
 	then	
 		sudo pacman -R i3-wm
 	fi
-	yay -T ttf-material-icons-git | yay -S -
-	sudo $pacman i3-gaps polybar nextcloud-client entr xautolock i3lock clipit compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	yay -T polybar clipit ttf-material-icons-git | yay -S -
+	sudo $pacman i3-gaps nextcloud-client entr xautolock i3lock compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
