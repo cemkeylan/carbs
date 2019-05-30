@@ -109,7 +109,7 @@ fi
 if [ $DM = TRUE ]
 then
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/.log && sleep 1
-	sudo pacman -S sddm && sudo systemctl enable sddm
+	sudo pacman -S lightdm lightdm-gtk-greeter && sudo systemctl enable lightdm
 fi
 if [ $I3 = TRUE ]
 then
