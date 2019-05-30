@@ -5,6 +5,7 @@ export WALLPAPER=${WALLPAPER-TRUE}
 export I3=${I3-TRUE}
 export EXECUTE=${EXECUTE-FALSE}
 export DM=${DM-FALSE}
+export COMBINED=${COMBINED-FALSE}  # Does not ask to restart display manager if combined with another script
 
 case $1 in
 	--dry-run)
@@ -109,7 +110,7 @@ fi
 if [ $DM = TRUE ]
 then
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/.log && sleep 1
-	sudo pacman -S lightdm lightdm-gtk-greeter && sudo systemctl enable lightdm
+	sudo pacman -S sddm && sudo systemctl enable sddm
 fi
 if [ $I3 = TRUE ]
 then
@@ -288,7 +289,7 @@ then
 				;;
 		esac
 	done
-	if [ $TEST = 0 ]
+	if [ $TEST = 0 ] && [ $COMBINED = FALSE ]
 	then
 		printf "${GREEN}The script is finished, should I restart your display manager?\n(yes/no) "
 		read answer
