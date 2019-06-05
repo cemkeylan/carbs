@@ -143,12 +143,12 @@ then
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
-	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/.log
+	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/.log
 	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/.log
 	mkdir -p $HOME/bin
 	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/.log
 	echo -e "${YELLOW}Downloading dmenu from Gitlab" | tee -a $CARBHOME/.log
-	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dmenu.git && cd dmenu || clear && echo -e "${RED}Could not clone dmenu from Cem's repository trying the official repository from suckless.org" && git clone https://git.suckless.org/dmenu || errorhandler "Could not clone dmenu"
+	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dmenu.git && cd dmenu || errorhandler "Could not clone dmenu"
 	while :
 	do
 		clear
