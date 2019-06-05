@@ -28,10 +28,16 @@ CARBHOME=$HOME/carbsinstall
 # Script Colors
 YELLOW='\033[1;33m'
 BLUE='\033[1;36m'
-RED='\033[0;31m'
+RED='\033[1;31m'
 GREEN='\033[0;32m'
 ORANGE='\033[0;33m'
 NC='\033[0m'  # No Color
+
+errorhandler() {\
+	echo -e "${RED}Error: $1${NC}" | tee -a $CARBHOME/.log &&\
+	exit
+}
+
 while :
 do
 	if [ $EXECUTE = TRUE ]
@@ -41,7 +47,7 @@ do
 	clear
 	printf "${BLUE}==================================================\n===     ======  =====       ===      =====      ==\n==  ===  ====    ====  ====  ==  ===  ===  ====  =\n=  =========  ==  ===  ====  ==  ====  ==  ====  =\n=  ========  ====  ==  ===   ==  ===  ====  ======\n=  ========  ====  ==      ====      =======  ====\n=  ========        ==  ====  ==  ===  ========  ==\n=  ========  ====  ==  ====  ==  ====  ==  ====  =\n==  ===  ==  ====  ==  ====  ==  ===  ===  ====  =\n===     ===  ====  ==  ====  ==      =====      ==\n==================================================\n"
 	printf "${BLUE}Welcome to Cem's Auto Rice Bootsrapper Script!\n\nPlease make sure
-that this is a brand new installation of Arch Linux\n\n\nHere are your options:\n\n" 
+that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy Linux.\n\n\nHere are your options:\n\n" 
 	if [ $(uname -m) != "x86_64" ]
 	then
 		printf "${RED}Warning! Your architechture does not seem to be 64-bit. \nIf you are using an ARM Processor, this script will not work as some of the requirements cannot be built in ARMv8 architechture.\nIf you have 32-bit architechture, installation will be fine, however, there are problems in the way compton works (it doesn't).${BLUE}"
@@ -105,22 +111,22 @@ then
 	mkdir -p $HOME/Pictures/Wallpapers && \
 	echo -e "${GREEN}Created a folder to the path $HOME/Pictures/Wallpapers${NC}" &&\
 	cd $HOME/Pictures && echo -e "${YELLOW}Downloading Wallpapers" &&\
-	git clone https://gitlab.cemkeylan.com/cemkeylan/Wallpapers.git && echo -e "${GREEN}Downloaded Wallpapers successfully${NC}"
+	git clone https://gitlab.cemkeylan.com/cemkeylan/Wallpapers.git && echo -e "${GREEN}Downloaded Wallpapers successfully${NC}" || errorhandler "Could not download wallpapers\nYou might want to download those directly.\nPlace those in $HOME/Pictures/Wallpapers"
 fi
 if [ $DM = TRUE ]
 then
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/.log && sleep 1
-	sudo pacman -S sddm && sudo systemctl enable sddm
+	sudo pacman -S sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
 fi
 if [ $I3 = TRUE ]
 then
 	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/.log && sleep 1
 	printf "These are:\n* compton\n* feh (wallpaper handler)\n* polybar\n* mpd (music player daemon)\n* xorg-xbacklight (screen brightness controller\n* material icons (bar icons)\n* i3-gaps tiling window manager\n\n"
-	if [ $TEST = 0 ]
+	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
-		sudo pacman -Syy
+		sudo pacman -Syy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
-	pacman -T git | sudo pacman -S -
+	pacman -T git | xargs -r sudo pacman -S || errorhandler "Could not install git"
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay.git
@@ -129,10 +135,11 @@ then
 	fi
 	if [ $(pacman -T i3-wm) != "i3-wm" ]
 	then	
-		sudo pacman -R i3-wm
+		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
 	yay -T clipit ttf-material-icons-git | yay -S -
-	sudo $pacman i3-gaps dunst polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation entr xautolock i3lock compton terminator feh mpd xorg-xbacklight | sudo pacman -S - && yay -T polybar | yay -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log
+	sudo $pacman i3-gaps dunst polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation entr xautolock compton terminator feh mpd xorg-xbacklight | xargs -r sudo pacman -S | tee -a $CARBHOME/.log && yay -T polybar | yay -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information"
+	yay -T i3lock-fancy-git | xargs -r yay -S || errorhandler "Could not install i3lock-fancy-git"
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
@@ -141,7 +148,7 @@ then
 	mkdir -p $HOME/bin
 	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/.log
 	echo -e "${YELLOW}Downloading dmenu from Gitlab" | tee -a $CARBHOME/.log
-	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dmenu.git && cd dmenu
+	cd $CARBHOME && git clone https://gitlab.cemkeylan.com/cemkeylan/dmenu.git && cd dmenu || clear && echo -e "${RED}Could not clone dmenu from Cem's repository trying the official repository from suckless.org" && git clone https://git.suckless.org/dmenu || errorhandler "Could not clone dmenu"
 	while :
 	do
 		clear
@@ -164,7 +171,7 @@ then
 	echo -e "${YELLOW}Compiling and installing dmenu" >> $CARBHOME/.log
 	if [ $TEST = 0 ]
 	then
-		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log && sleep 2
+		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log && sleep 2 || "Could not install dmenu"
 	else
 		make && echo Skipping Installation because of dry run | tee -a $CARBHOME/.log
 	fi
@@ -197,21 +204,21 @@ then
 		case $answer in
 			1)
 				echo Installing FIREFOX | tee -a $CARBHOME/.log
-				sudo $pacman firefox | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman firefox | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Firefox"
 				BROWSER=firefox
 				printf "\n# Web Browser \nset \$brow firefox" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
 				echo Installing QUTEBROWSER | tee -a $CARBHOME/.log
-				sudo $pacman qutebrowser | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman qutebrowser | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install qutebrowser"
 				BROWSER=qutebrowser
 				printf "\n# Web Browser \nset \$brow qutebrowser" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing MIDORI | tee -a $CARBHOME/.log
-				sudo $pacman midori | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman midori | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Midori"
 				BROWSER=midori
 				printf "\n# Web Browser \nset \$brow midori" >> $HOME/.config/i3/config
 				break
@@ -225,26 +232,26 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your Music Player:\n\n${YELLOW}1) ncmpcpp (Terminal-based music player that runs off mpd (Music Player Daemon)\n2) mocp (Terminal-based music player)\n3) Ario\nn) None, I will install and configure it on my own\n\nPlease choose: ${GREEN}"
+		printf "${BLUE}What would you prefer as your Music Player:\n\n${YELLOW}1) ncmpcpp (Ncurses music player that runs off mpd (Music Player Daemon)\n2) mocp (Terminal-based music player)\n3) Ario\nn) None, I will install and configure it on my own\n\nPlease choose: ${GREEN}"
 		echo MUSIC PLAYER INSTALLATION >> $CARBHOME/.log
 		read answer
 		printf "${YELLOW}"
 		case $answer in
 			1)
 				echo Installing NCMPCPP | tee -a $CARBHOME/.log
-				sudo $pacman ncmpcpp | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman ncmpcpp | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install ncmpcpp"
 				printf "\n#Music Player \nset \$music terminator -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
 				break
 				;;
 			2)
 				echo Installing MOCP | tee -a $CARBHOME/.log
-				sudo $pacman moc | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman moc | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music terminator -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Ario | tee -a $CARBHOME/.log
-				sudo $pacman ario | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman ario | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music ario\n" >> $HOME/.config/i3/config
 				break
 				;;
@@ -261,26 +268,29 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your File Manager:\n\n${YELLOW}1) lf (Terminal-based file manager)\n2) Nemo (qt file manager)\n3) Dolphin\n\nPlease choose: ${GREEN}"
+		printf "${BLUE}What would you prefer as your File Manager:\n\n${YELLOW}1) lf (Terminal-based file manager)\n2) Nemo (qt file manager)\n3) Dolphin\nn)None, I don't want a file manager\n\nPlease choose: ${GREEN}"
 		read answer
 		printf "${YELLOW}"
 		case $answer in
 			1)
 				echo Installing lf | tee -a $CARBHOME/.log
-				yay -T lf | yay -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				yay -T lf | yay -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install lf"
 				printf "\n# File Manager \nset \$fm terminator -e \"lf && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
 				echo Installing Nemo | tee -a $CARBHOME/.log
-				sudo $pacman nemo | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman nemo | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Nemo File Manager"
 				printf "\n# File Manager \nset \$fm nemo\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Dolphin | tee -a $CARBHOME/.log
-				sudo $pacman dolphin | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log
+				sudo $pacman dolphin | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Dolphin File Manager"
 				printf "\n# File Manager \nset \$fm dolphin\n" >> $HOME/.config/i3/config
+				break
+				;;
+			n)
 				break
 				;;
 			*)
@@ -291,11 +301,12 @@ then
 	done
 	if [ $TEST = 0 ] && [ $COMBINED = FALSE ]
 	then
-		printf "${GREEN}The script is finished, should I restart your display manager?\n(yes/no) "
+		clear
+		printf "${GREEN}IMPORTANT NOTE:\nYou should restart your display-manager after the first time you launch i3\n\nThe script is finished, should I restart your display manager?\n(yes/no) "
 		read answer
 		case $answer in
 			yes)
-				sudo systemctl restart display-manager
+				sudo systemctl restart display-manager || errorhandler "The script was successful, however, display manager could not be restarted, exiting..."
 				;;
 			*)
 				echo Exiting
