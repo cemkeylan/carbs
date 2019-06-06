@@ -116,7 +116,7 @@ fi
 if [ $DM = TRUE ]
 then
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/.log && sleep 1
-	sudo pacman -S sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
+	sudo pacman -S --noconfirm sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
 fi
 if [ $I3 = TRUE ]
 then
@@ -126,10 +126,10 @@ then
 	then
 		sudo pacman -Syy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
-	pacman -T git | xargs -r sudo pacman -S || errorhandler "Could not install git"
+	pacman -T git | xargs -r sudo pacman -S --noconfirm || errorhandler "Could not install git"
 	if [ $(pacman -T yay) = "yay" ]
 	then
-		git clone https://aur.archlinux.org/yay.git
+		git clone https://aur.archlinux.org/yay-bin.git
 		cd yay
 		makepkg -si
 	fi
@@ -138,7 +138,7 @@ then
 		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
 	yay -T clipit ttf-material-icons-git | yay -S -
-	sudo $pacman i3-gaps dunst polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation entr xautolock compton terminator feh mpd xorg-xbacklight | xargs -r sudo pacman -S | tee -a $CARBHOME/.log && yay -T polybar | yay -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information"
+	sudo $pacman i3-gaps dunst polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation entr xautolock compton terminator feh mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm| tee -a $CARBHOME/.log && yay -T polybar | yay -S - && echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information"
 	yay -T i3lock-fancy-git | xargs -r yay -S || errorhandler "Could not install i3lock-fancy-git"
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
@@ -204,21 +204,21 @@ then
 		case $answer in
 			1)
 				echo Installing FIREFOX | tee -a $CARBHOME/.log
-				sudo $pacman firefox | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Firefox"
+				sudo $pacman firefox | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Firefox"
 				BROWSER=firefox
 				printf "\n# Web Browser \nset \$brow firefox" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
 				echo Installing QUTEBROWSER | tee -a $CARBHOME/.log
-				sudo $pacman qutebrowser | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install qutebrowser"
+				sudo $pacman qutebrowser | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install qutebrowser"
 				BROWSER=qutebrowser
 				printf "\n# Web Browser \nset \$brow qutebrowser" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing MIDORI | tee -a $CARBHOME/.log
-				sudo $pacman midori | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Midori"
+				sudo $pacman midori | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Midori"
 				BROWSER=midori
 				printf "\n# Web Browser \nset \$brow midori" >> $HOME/.config/i3/config
 				break
@@ -239,19 +239,19 @@ then
 		case $answer in
 			1)
 				echo Installing NCMPCPP | tee -a $CARBHOME/.log
-				sudo $pacman ncmpcpp | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install ncmpcpp"
+				sudo $pacman ncmpcpp | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install ncmpcpp"
 				printf "\n#Music Player \nset \$music terminator -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
 				break
 				;;
 			2)
 				echo Installing MOCP | tee -a $CARBHOME/.log
-				sudo $pacman moc | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
+				sudo $pacman moc | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music terminator -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Ario | tee -a $CARBHOME/.log
-				sudo $pacman ario | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
+				sudo $pacman ario | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music ario\n" >> $HOME/.config/i3/config
 				break
 				;;
@@ -280,13 +280,13 @@ then
 				;;
 			2)
 				echo Installing Nemo | tee -a $CARBHOME/.log
-				sudo $pacman nemo | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Nemo File Manager"
+				sudo $pacman nemo | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Nemo File Manager"
 				printf "\n# File Manager \nset \$fm nemo\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
 				echo Installing Dolphin | tee -a $CARBHOME/.log
-				sudo $pacman dolphin | sudo pacman -S - && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Dolphin File Manager"
+				sudo $pacman dolphin | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Dolphin File Manager"
 				printf "\n# File Manager \nset \$fm dolphin\n" >> $HOME/.config/i3/config
 				break
 				;;
