@@ -111,7 +111,7 @@ then
 	mkdir -p $HOME/Pictures/Wallpapers && \
 	echo -e "${GREEN}Created a folder to the path $HOME/Pictures/Wallpapers${NC}" &&\
 	cd $HOME/Pictures && echo -e "${YELLOW}Downloading Wallpapers" &&\
-	git clone https://git.ckyln.com/cemkeylan/Wallpapers.git && echo -e "${GREEN}Downloaded Wallpapers successfully${NC}" || errorhandler "Could not download wallpapers\nYou might want to download those directly.\nPlace those in $HOME/Pictures/Wallpapers"
+	git clone https://git.ckyln.com/Wallpapers && echo -e "${GREEN}Downloaded Wallpapers successfully${NC}" || errorhandler "Could not download wallpapers\nYou might want to download those directly.\nPlace those in $HOME/Pictures/Wallpapers"
 fi
 if [ $DM = TRUE ]
 then
@@ -146,13 +146,13 @@ then
 	echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log 
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
-	cd $CARBHOME && git clone https://git.ckyln.com/cemkeylan/dotfiles.git && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
+	cd $CARBHOME && git clone https://git.ckyln.com/dotfiles && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
 	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/.log
 	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/.log
 	mkdir -p $HOME/bin
 	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/.log
 	echo -e "${YELLOW}Downloading dmenu from Gitlab" | tee -a $CARBHOME/.log
-	cd $CARBHOME && git clone https://git.ckyln.com/cemkeylan/dmenu.git && cd dmenu || errorhandler "Could not clone dmenu"
+	cd $CARBHOME && git clone https://git.ckyln.com/dmenu && cd dmenu || errorhandler "Could not clone dmenu"
 	while :
 	do
 		clear
