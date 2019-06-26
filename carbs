@@ -139,7 +139,7 @@ then
 		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
 	yay -T clipit ttf-material-icons-git | xargs -r yay -S --noconfirm
-	pacman -T i3-gaps rofi dunst polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton terminator feh mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information." 
+	pacman -T i3-gaps rofi dunst unclutter polkit-gnome ttf-bitstream-vera ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton terminator feh mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information." 
         yay -T polybar | xargs -r yay -S --noconfirm || errorhandler "Could not install polybar"
 	yay -T i3lock-fancy-git | xargs -r yay -S --noconfirm || errorhandler "Could not install i3lock-fancy-git"
 	yay -T st-ckyln-git | xargs -r yay -S --noconfirm || errorhandler "Could not install st"
