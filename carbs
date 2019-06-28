@@ -106,6 +106,7 @@ echo "Setting the installation of display manager to $DM" >> $CARBHOME/.log
 echo "Setting the installation of tiling desktop to $I3" >> $CARBHOME/.log
 clear
 echo -e "${GREEN}Starting Script${NC}" | tee -a $CARBHOME/.log
+pacman -T git | xargs -r sudo pacman -S --noconfirm || errorhandler "Could not install git"
 if [ $WALLPAPER = TRUE ]
 then
 	mkdir -p $HOME/Pictures/Wallpapers && \
@@ -127,7 +128,6 @@ then
 	then
 		sudo pacman -Syy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
-	pacman -T git | xargs -r sudo pacman -S --noconfirm || errorhandler "Could not install git"
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay-bin.git
