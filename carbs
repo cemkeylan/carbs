@@ -152,7 +152,7 @@ then
 	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/.log
 	mkdir -p $HOME/bin
 	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/.log
-	echo -e "${YELLOW}Downloading dmenu from Gitlab" | tee -a $CARBHOME/.log
+	echo -e "${YELLOW}Downloading dmenu from repository" | tee -a $CARBHOME/.log
 	cd $CARBHOME && git clone https://git.ckyln.com/dmenu && cd dmenu || errorhandler "Could not clone dmenu"
 	while :
 	do
