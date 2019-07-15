@@ -137,7 +137,7 @@ then
 		cd yay-bin
 		makepkg -si
 	fi
-	if [ "$(pacman -Q i3-wm | awk '{print $1}')" = "i3-wm" ]
+	if [ "$(pacman -Q i3-wm 2>/dev/null | awk '{print $1}')" = "i3-wm" ]
 	then	
 		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
