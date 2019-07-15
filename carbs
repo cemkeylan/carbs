@@ -35,8 +35,11 @@ NC='\033[0m'  # No Color
 
 errorhandler() {\
 	echo -e "${RED}Error: $1${NC}" | tee -a $CARBHOME/.log &&\
-	exit
+	exit 1
 }
+
+pacman -Q sudo || errorhandler 'Please install base-devel as the root user before running this script by typing: pacman -S base-devel'
+pacman -Q fakeroot || errorhandler 'Please install base-devel as the root user before running this script by typing: pacman -S base-devel'
 
 while :
 do
