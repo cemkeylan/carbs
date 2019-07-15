@@ -129,7 +129,7 @@ then
 	sleep 1
 	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
-		sudo pacman -Syy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
+		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
 	if [ $(pacman -T yay) = "yay" ]
 	then
