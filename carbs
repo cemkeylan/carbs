@@ -134,7 +134,7 @@ then
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay-bin.git
-		cd yay
+		cd yay-bin
 		makepkg -si
 	fi
 	if [ "$(pacman -Q i3-wm | awk '{print $1}')" = "i3-wm" ]
