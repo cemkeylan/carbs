@@ -34,11 +34,11 @@ ORANGE='\033[0;33m'
 NC='\033[0m'  # No Color
 
 errorhandler() {\
-	echo -e "${RED}Error: $1${NC}" | tee -a $CARBHOME/.log &&\
+	echo -e "${RED}Error: $1${NC}" | tee -a $CARBHOME/log &&\
 	exit 1
 }
 
-pacman -Q sudo || errorhandler 'Please install base-devel as the root user before running this script by typing: pacman -S base-devel'
+[ $EUID = 0 ] && errorhandler 'You cannot run this script as the root user'
 
 while :
 do
@@ -103,12 +103,21 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 			;;
 	esac
 done
-echo "Setting the installation of wallpapers to $WALLPAPER" >> $CARBHOME/.log
-echo "Setting the installation of display manager to $DM" >> $CARBHOME/.log
-echo "Setting the installation of tiling desktop to $I3" >> $CARBHOME/.log
+echo "Setting the installation of wallpapers to $WALLPAPER" >> $CARBHOME/log
+echo "Setting the installation of display manager to $DM" >> $CARBHOME/log
+echo "Setting the installation of tiling desktop to $I3" >> $CARBHOME/log
 clear
-echo -e "${GREEN}Starting Script${NC}" | tee -a $CARBHOME/.log
-pacman -T git | xargs -r sudo pacman -S --noconfirm || errorhandler "Could not install git"
+echo -e "${GREEN}Starting Script${NC}" | tee -a $CARBHOME/log
+if [ -n "$(pacman -T git)" ]
+then
+	if [ -n "$(pacman -T sudo)" ]
+	then
+		printf "Enter root password\n"
+		su -c "pacman -Sy && pacman -S --noconfirm git"
+	else
+		sudo pacman -S --noconfirm git
+	fi
+fi
 if [ $WALLPAPER = TRUE ]
 then
 	mkdir -p $HOME/Pictures/Wallpapers && \
@@ -118,14 +127,16 @@ then
 fi
 if [ $DM = TRUE ]
 then
-	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/.log && sleep 1
+	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm"
+	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/log && sleep 1
 	sudo pacman -S --noconfirm sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
 fi
 if [ $I3 = TRUE ]
 then
-	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/.log && sleep 1
+	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/log && sleep 1
 	printf "These are:\n* compton\n* feh (wallpaper handler)\n* polybar\n* mpd (music player daemon)\n* xorg-xbacklight (screen brightness controller\n* material icons (bar icons)\n* i3-gaps tiling window manager\n\n"
 	sleep 1
+	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm"
 	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
 		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
@@ -142,20 +153,20 @@ then
 		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
 	yay -T clipit ttf-material-icons-git | xargs -r yay -S --noconfirm
-	pacman -T i3-gaps rofi dunst unclutter polkit-gnome ttf-bitstream-vera jq ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton zathura zathura-pdf-mupdf feh sxiv mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/.log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/.log for more information." 
+	pacman -T i3-gaps rofi dunst unclutter polkit-gnome ttf-bitstream-vera jq ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton zathura zathura-pdf-mupdf feh sxiv mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/log for more information." 
         yay -T polybar | xargs -r yay -S --noconfirm || errorhandler "Could not install polybar"
 	yay -T sxlock-git | xargs -r yay -S --noconfirm || errorhandler "Could not install sxlock-git"
 	yay -T st-ckyln-git | xargs -r yay -S --noconfirm || errorhandler "Could not install st"
 	cd .. 
-	echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/.log 
+	echo -e "${GREEN}Installed Mandatory Packages" | tee -a $CARBHOME/log 
 	sleep 2
-	printf "Downloading configuration files\n" | tee -a $CARBHOME/.log
+	printf "Downloading configuration files\n" | tee -a $CARBHOME/log
 	cd $CARBHOME && git clone https://git.ckyln.com/dotfiles && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
-	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && cp -r -v $PWD/.config/rofi $HOME/.config && cp -r -v $PWD/.config/mpd $HOME/.config && cp -v $PWD/.nvimrc $HOME/.nvimrc && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/.log
-	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/.log
+	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && cp -r -v $PWD/.config/rofi $HOME/.config && cp -r -v $PWD/.config/mpd $HOME/.config && cp -v $PWD/.nvimrc $HOME/.nvimrc && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/log
+	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/log
 	mkdir -p $HOME/bin
-	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/.log
-	echo -e "${YELLOW}Downloading dmenu from repository" | tee -a $CARBHOME/.log
+	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/log
+	echo -e "${YELLOW}Downloading dmenu from repository" | tee -a $CARBHOME/log
 	cd $CARBHOME && git clone https://git.ckyln.com/dmenu && cd dmenu || errorhandler "Could not clone dmenu"
 	while :
 	do
@@ -176,12 +187,12 @@ then
 				;;
 		esac
 	done
-	echo -e "${YELLOW}Compiling and installing dmenu" >> $CARBHOME/.log
+	echo -e "${YELLOW}Compiling and installing dmenu" >> $CARBHOME/log
 	if [ $TEST = 0 ]
 	then
-		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/.log && sleep 2 || "Could not install dmenu"
+		make && sudo make install && echo -e "${GREEN}Successfully installed dmenu" | tee -a $CARBHOME/log && sleep 2 || "Could not install dmenu"
 	else
-		make && echo Skipping Installation because of dry run | tee -a $CARBHOME/.log
+		make && echo Skipping Installation because of dry run | tee -a $CARBHOME/log
 	fi
 	while :
 	do
@@ -190,7 +201,7 @@ then
 		read answer
 		case $answer in
 			y)
-				cp -f $CARBHOME/dotfiles/.bashrc $HOME/.bashrc && printf "${GREEN}Successfully installed BashRC" | tee -a $CARBSHOME/.log
+				cp -f $CARBHOME/dotfiles/.bashrc $HOME/.bashrc && printf "${GREEN}Successfully installed BashRC" | tee -a $CARBSHOME/log
 				cp -f $CARBHOME/dotfiles/.aliases $HOME/.aliases
 				break
 				;;
@@ -207,27 +218,27 @@ then
 	do
 		clear
 		printf "${BLUE}What would you prefer as your browser:\n\n${YELLOW}1) Firefox (recommended if you are not familiar to vim)\n2) qutebrowser (a browser with vim-like controls)\n3) midori (a lightweight browser that I use on my ancient netbook)\n\nPlease choose: ${GREEN}"
-		echo BROWSER INSTALLATION >> $CARBHOME/.log
+		echo BROWSER INSTALLATION >> $CARBHOME/log
 		read answer
 		printf "${YELLOW}"
 		case $answer in
 			1)
-				echo Installing FIREFOX | tee -a $CARBHOME/.log
-				sudo $pacman firefox | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Firefox"
+				echo Installing FIREFOX | tee -a $CARBHOME/log
+				sudo $pacman firefox | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install Firefox"
 				BROWSER=firefox
 				printf "\n# Web Browser \nset \$brow firefox" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
-				echo Installing QUTEBROWSER | tee -a $CARBHOME/.log
-				sudo $pacman qutebrowser | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install qutebrowser"
+				echo Installing QUTEBROWSER | tee -a $CARBHOME/log
+				sudo $pacman qutebrowser | xargs -r sudo pacman -S  --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install qutebrowser"
 				BROWSER=qutebrowser
 				printf "\n# Web Browser \nset \$brow qutebrowser" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
-				echo Installing MIDORI | tee -a $CARBHOME/.log
-				sudo $pacman midori | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Midori"
+				echo Installing MIDORI | tee -a $CARBHOME/log
+				sudo $pacman midori | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install Midori"
 				BROWSER=midori
 				printf "\n# Web Browser \nset \$brow midori" >> $HOME/.config/i3/config
 				break
@@ -242,30 +253,30 @@ then
 	do
 		clear
 		printf "${BLUE}What would you prefer as your Music Player:\n\n${YELLOW}1) ncmpcpp (Ncurses music player that runs off mpd (Music Player Daemon)\n2) mocp (Terminal-based music player)\n3) Ario\nn) None, I will install and configure it on my own\n\nPlease choose: ${GREEN}"
-		echo MUSIC PLAYER INSTALLATION >> $CARBHOME/.log
+		echo MUSIC PLAYER INSTALLATION >> $CARBHOME/log
 		read answer
 		printf "${YELLOW}"
 		case $answer in
 			1)
-				echo Installing NCMPCPP | tee -a $CARBHOME/.log
-				sudo $pacman ncmpcpp | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install ncmpcpp"
+				echo Installing NCMPCPP | tee -a $CARBHOME/log
+				sudo $pacman ncmpcpp | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install ncmpcpp"
 				printf "\n#Music Player \nset \$music terminator -e \"ncmpcpp --port 6601 && exit\"\n" >> $HOME/.config/i3/config 
 				break
 				;;
 			2)
-				echo Installing MOCP | tee -a $CARBHOME/.log
-				sudo $pacman moc | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
+				echo Installing MOCP | tee -a $CARBHOME/log
+				sudo $pacman moc | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music terminator -e \"mocp && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
-				echo Installing Ario | tee -a $CARBHOME/.log
-				sudo $pacman ario | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install MOCP"
+				echo Installing Ario | tee -a $CARBHOME/log
+				sudo $pacman ario | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install MOCP"
 				printf "\n#Music Player \nset \$music ario\n" >> $HOME/.config/i3/config
 				break
 				;;
 			n)
-				echo -e "$USER opted out of music player" >> $CARBHOME/.log
+				echo -e "$USER opted out of music player" >> $CARBHOME/log
 				break
 				;;
 			*)
@@ -282,20 +293,20 @@ then
 		printf "${YELLOW}"
 		case $answer in
 			1)
-				echo Installing lf | tee -a $CARBHOME/.log
-				yay -T lf | xargs -r yay -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install lf"
+				echo Installing lf | tee -a $CARBHOME/log
+				yay -T lf | xargs -r yay -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install lf"
 				printf "\n# File Manager \nset \$fm terminator -e \"lf && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
 			2)
-				echo Installing Nemo | tee -a $CARBHOME/.log
-				sudo $pacman nemo | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Nemo File Manager"
+				echo Installing Nemo | tee -a $CARBHOME/log
+				sudo $pacman nemo | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install Nemo File Manager"
 				printf "\n# File Manager \nset \$fm nemo\n" >> $HOME/.config/i3/config
 				break
 				;;
 			3)
-				echo Installing Dolphin | tee -a $CARBHOME/.log
-				sudo $pacman dolphin | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/.log || errorhandler "Could not install Dolphin File Manager"
+				echo Installing Dolphin | tee -a $CARBHOME/log
+				sudo $pacman dolphin | xargs -r sudo pacman -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install Dolphin File Manager"
 				printf "\n# File Manager \nset \$fm dolphin\n" >> $HOME/.config/i3/config
 				break
 				;;
