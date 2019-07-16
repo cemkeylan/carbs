@@ -39,7 +39,6 @@ errorhandler() {\
 }
 
 pacman -Q sudo || errorhandler 'Please install base-devel as the root user before running this script by typing: pacman -S base-devel'
-pacman -Q fakeroot || errorhandler 'Please install base-devel as the root user before running this script by typing: pacman -S base-devel'
 
 while :
 do
@@ -131,6 +130,7 @@ then
 	then
 		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
+	[ -n "$(pacman -T fakeroot)" ] && sudo pacman -S base-devel
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay-bin.git
