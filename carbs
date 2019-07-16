@@ -135,7 +135,7 @@ then
 	then
 		git clone https://aur.archlinux.org/yay-bin.git
 		cd yay-bin
-		makepkg -si
+		makepkg -si --noconfirm
 	fi
 	if [ "$(pacman -Q i3-wm 2>/dev/null | awk '{print $1}')" = "i3-wm" ]
 	then	
