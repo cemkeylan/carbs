@@ -164,7 +164,7 @@ then
 		sudo pacman -R i3-wm || errorhandler "Could not remove i3-wm"
 	fi
 	yay -T clipit ttf-material-icons-git | xargs -r yay -S --noconfirm
-	pacman -T i3-gaps rofi dunst unclutter polkit-gnome ttf-bitstream-vera jq ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton zathura zathura-pdf-mupdf feh sxiv mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/log for more information." 
+	pacman -T i3-gaps rofi dunst neovim unclutter polkit-gnome ttf-bitstream-vera jq ttf-dejavu ttf-droid ttf-inconsolata ttf-indic-otf ttf-liberation mpc entr xautolock compton zathura zathura-pdf-mupdf feh sxiv mpd xorg-xbacklight | xargs -r sudo pacman -S --noconfirm | tee -a $CARBHOME/log || errorhandler "Could not install some of the packages, check the logs at $CARBHOME/log for more information." 
         yay -T polybar | xargs -r yay -S --noconfirm || errorhandler "Could not install polybar"
 	yay -T sxlock-git | xargs -r yay -S --noconfirm || errorhandler "Could not install sxlock-git"
 	yay -T st-ckyln-git | xargs -r yay -S --noconfirm || errorhandler "Could not install st"
@@ -173,7 +173,7 @@ then
 	sleep 2
 	printf "Downloading configuration files\n" | tee -a $CARBHOME/log
 	cd $CARBHOME && git clone https://git.ckyln.com/dotfiles && cd $CARBHOME/dotfiles && mkdir -p $HOME/.config/i3 && mkdir -p $HOME/.config/polybar && mkdir -p $HOME/.config/terminator &&\
-	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && cp -r -v $PWD/.config/rofi $HOME/.config && cp -r -v $PWD/.config/mpd $HOME/.config && cp -v $PWD/.nvimrc $HOME/.nvimrc && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/log
+	cp -v $PWD/.config/i3/config $HOME/.config/i3/config && cp -v $PWD/.config/polybar/config $HOME/.config/polybar/config && cp -v $PWD/.config/terminator/config $HOME/.config/terminator/config && cp -v $PWD/.config/dunstrc $HOME/.config/dunstrc && cp -r -v $PWD/.config/calcurse $HOME/.config && cp -r -v $PWD/.config/rofi $HOME/.config && cp -r -v $PWD/.config/mpd $HOME/.config && cp -r -v $PWD/.config/nvim $HOME/.config && printf "${GREEN}Sucessfully placed configuration files\n" | tee -a $CARBHOME/log
 	printf "${YELLOW}Installing binaries to $HOME/bin" | tee -a $CARBHOME/log
 	mkdir -p $HOME/bin
 	cp $PWD/bin/* $HOME/bin/ && printf " ${GREEN} Done\n" | tee -a $CARBHOME/log
