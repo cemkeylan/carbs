@@ -373,6 +373,7 @@ then
 				;;
 		esac
 	done
+	printf "Installing Documentation, License, and README to /usr/share/doc/carbs\n" && sudo mkdir /usr/share/doc/carbs && sudo curl -o /usr/share/doc/carbs/DOCUMENTATION.pdf https://cemkeylan.com/files/carbs.pdf && sudo curl -o /usr/share/doc/carbs/README.md https://git.ckyln.com/carbs/plain/README.md && sudo curl -o /usr/share/doc/carbs/LICENSE https://git.ckyln.com/carbs/plain/LICENSE && sudo chmod 644 /usr/share/doc/carbs/*
 	if [ $TEST = 0 ] && [ $COMBINED = FALSE ]
 	then
 		clear
