@@ -183,8 +183,13 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}Would you like to configure dmenu?\n(y/n) "
-		read answer
+		if [ $DEFAULTS = FALSE ]
+		then
+			printf "${BLUE}Would you like to configure dmenu?\n(y/n) "
+			read answer
+		else
+			answer=y
+		fi
 		case $answer in
 			y)
 				${EDITOR-nano} $PWD/config.h
@@ -209,8 +214,13 @@ then
 	while :
 	do
 		clear
-		printf "${RED}Should I install bashrc? This is dangerous if this is not a fresh system\n(y/n) "
-		read answer
+		if [ $DEFAULTS = FALSE ]
+		then
+			printf "${RED}Should I install bashrc? This is dangerous if this is not a fresh system\n(y/n) "
+			read answer
+		else
+			answer=y
+		fi
 		case $answer in
 			y)
 				cp -f $CARBHOME/dotfiles/.bashrc $HOME/.bashrc && printf "${GREEN}Successfully installed BashRC" | tee -a $CARBSHOME/log
