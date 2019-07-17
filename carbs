@@ -39,6 +39,7 @@ errorhandler() {\
 }
 
 [ $EUID = 0 ] && errorhandler 'You cannot run this script as the root user'
+UN=$USER
 
 while :
 do
@@ -127,7 +128,7 @@ then
 fi
 if [ $DM = TRUE ]
 then
-	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm"
+	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) ALL\n' > /etc/sudoers.d/new"
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/log && sleep 1
 	sudo pacman -S --noconfirm sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
 fi
@@ -136,7 +137,7 @@ then
 	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/log && sleep 1
 	printf "These are:\n* compton\n* feh (wallpaper handler)\n* polybar\n* mpd (music player daemon)\n* xorg-xbacklight (screen brightness controller\n* material icons (bar icons)\n* i3-gaps tiling window manager\n\n"
 	sleep 1
-	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm"
+	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) ALL\n' > /etc/sudoers.d/new"
 	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
 		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
