@@ -6,6 +6,7 @@ export I3=${I3-TRUE}
 export EXECUTE=${EXECUTE-FALSE}
 export DM=${DM-FALSE}
 export COMBINED=${COMBINED-FALSE}  # Does not ask to restart display manager if combined with another script
+export DEFAULTS=${DEFAULTS-FALSE}
 
 case $1 in
 	--dry-run)
@@ -59,6 +60,7 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 	echo -e " ${YELLOW}w)  Default Wallpapers      $WALLPAPER"
 	echo -e " ${YELLOW}i)    Tiling Desktop        $I3"
 	echo -e " ${YELLOW}d) Display Manager (sddm)   $DM"
+	echo -e " ${YELLOW}n) Install Defaults ONLY    $DEFAULTS"
 	echo -e " ${YELLOW}e)     Start Script"
 	echo -e " ${YELLOW}q)     Exit Program"
 	printf "\nType your answer: "
@@ -86,6 +88,14 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 				DM=FALSE
 			else
 				DM=TRUE
+			fi
+			;;
+		n)
+			if [ $DEFAULTS = TRUE ]
+			then
+				DEFAULTS=FALSE
+			else
+				DEFAULTS=TRUE
 			fi
 			;;
 		e)
@@ -128,7 +138,7 @@ then
 fi
 if [ $DM = TRUE ]
 then
-	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) ALL\n' > /etc/sudoers.d/new"
+	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/log && sleep 1
 	sudo pacman -S --noconfirm sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
 fi
@@ -137,12 +147,12 @@ then
 	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/log && sleep 1
 	printf "These are:\n* compton\n* feh (wallpaper handler)\n* polybar\n* mpd (music player daemon)\n* xorg-xbacklight (screen brightness controller\n* material icons (bar icons)\n* i3-gaps tiling window manager\n\n"
 	sleep 1
-	[ -n "$(pacman -T sudo)" ] && printf "Please enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) ALL\n' > /etc/sudoers.d/new"
+	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
 	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
 		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
 	fi
-	[ -n "$(pacman -T fakeroot)" ] && sudo pacman -S base-devel
+	[ -n "$(pacman -T fakeroot)" ] && sudo pacman -S --noconfirm base-devel
 	if [ $(pacman -T yay) = "yay" ]
 	then
 		git clone https://aur.archlinux.org/yay-bin.git
@@ -218,9 +228,14 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your browser:\n\n${YELLOW}1) Firefox (recommended if you are not familiar to vim)\n2) qutebrowser (a browser with vim-like controls)\n3) midori (a lightweight browser that I use on my ancient netbook)\n\nPlease choose: ${GREEN}"
 		echo BROWSER INSTALLATION >> $CARBHOME/log
-		read answer
+		if [ $DEFAULT = FALSE ]
+		then
+			printf "${BLUE}What would you prefer as your browser:\n\n${YELLOW}1) Firefox (recommended if you are not familiar to vim)\n2) qutebrowser (a browser with vim-like controls)\n3) midori (a lightweight browser that I use on my ancient netbook)\n\nPlease choose: ${GREEN}"
+			read answer
+		else
+			answer=2
+		fi
 		printf "${YELLOW}"
 		case $answer in
 			1)
@@ -253,9 +268,14 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your Music Player:\n\n${YELLOW}1) ncmpcpp (Ncurses music player that runs off mpd (Music Player Daemon)\n2) mocp (Terminal-based music player)\n3) Ario\nn) None, I will install and configure it on my own\n\nPlease choose: ${GREEN}"
 		echo MUSIC PLAYER INSTALLATION >> $CARBHOME/log
-		read answer
+		if [ $DEFAULT = FALSE ]
+		then
+			printf "${BLUE}What would you prefer as your Music Player:\n\n${YELLOW}1) ncmpcpp (Ncurses music player that runs off mpd (Music Player Daemon)\n2) mocp (Terminal-based music player)\n3) Ario\nn) None, I will install and configure it on my own\n\nPlease choose: ${GREEN}"
+			read answer
+		else
+			answer=1
+		fi
 		printf "${YELLOW}"
 		case $answer in
 			1)
@@ -289,13 +309,18 @@ then
 	while :
 	do
 		clear
-		printf "${BLUE}What would you prefer as your File Manager:\n\n${YELLOW}1) lf (Terminal-based file manager)\n2) Nemo (qt file manager)\n3) Dolphin\nn)None, I don't want a file manager\n\nPlease choose: ${GREEN}"
-		read answer
+		if [ $DEFAULT = FALSE ]
+		then
+			printf "${BLUE}What would you prefer as your File Manager:\n\n${YELLOW}1) lf (Terminal-based file manager)\n2) Nemo (qt file manager)\n3) Dolphin\nn)None, I don't want a file manager\n\nPlease choose: ${GREEN}"
+			read answer
+		else
+			answer=1
+		fi
 		printf "${YELLOW}"
 		case $answer in
 			1)
 				echo Installing lf | tee -a $CARBHOME/log
-				yay -T lf | xargs -r yay -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install lf"
+				yay -T lf-bin | xargs -r yay -S --noconfirm && echo -e "${GREEN}Installed successfully" | tee -a $CARBHOME/log || errorhandler "Could not install lf"
 				printf "\n# File Manager \nset \$fm terminator -e \"lf && exit\"\n" >> $HOME/.config/i3/config
 				break
 				;;
