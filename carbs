@@ -140,7 +140,13 @@ if [ -n "$(pacman -T git)" ]
 then
 	if [ -n "$(pacman -T sudo)" ]
 	then
-		printf "Enter root password\n"
+		if [ $I3 = TRUE ] || [ $DM =TRUE ]
+		then
+			printf "Enter root password\n"
+			su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
+		else
+			printf "Enter root password\n"
+		fi
 		su -c "pacman -Sy && pacman -S --noconfirm git"
 	else
 		sudo pacman -S --noconfirm git
