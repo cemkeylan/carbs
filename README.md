@@ -1,7 +1,7 @@
 # CARBS
 **Cem's Auto-Rice Bootstrapping Script** *(Not a fork of LARBS)*
 
-** Documentation [(PDF)](https://cemkeylan.com/files/carbs.pdf) [(HTML)](https://cemkeylan.com/documentation)**
+**Documentation [(PDF)](https://cemkeylan.com/files/carbs.pdf) [(HTML)](https://cemkeylan.com/documentation)**
 
 Documentation is also installed in /usr/share/doc/carbs/documentation.pdf
 
