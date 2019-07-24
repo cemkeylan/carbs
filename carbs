@@ -24,6 +24,7 @@ export EXECUTE=${EXECUTE-FALSE}
 export DM=${DM-FALSE}
 export COMBINED=${COMBINED-FALSE}  # Does not ask to restart display manager if combined with another script
 export DEFAULTS=${DEFAULTS-FALSE}
+export ZSHINST=${ZSHINST-FALSE}
 
 case $1 in
 	--dry-run)
@@ -77,6 +78,7 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 	echo -e " ${YELLOW}w)  Default Wallpapers      $WALLPAPER"
 	echo -e " ${YELLOW}i)    Tiling Desktop        $I3"
 	echo -e " ${YELLOW}d) Display Manager (sddm)   $DM"
+	echo -e " ${YELLOW}z) Make Zsh Default Shell   $ZSHINST"
 	echo -e " ${YELLOW}n) Install Defaults ONLY    $DEFAULTS"
 	echo -e " ${YELLOW}e)     Start Script"
 	echo -e " ${YELLOW}q)     Exit Program"
@@ -107,6 +109,14 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 				DM=TRUE
 			fi
 			;;
+		z)
+			if [ $ZSHINST = TRUE ]
+			then
+				ZSHINST=FALSE
+			else
+				ZSHINST=TRUE
+			fi
+			;;
 		n)
 			if [ $DEFAULTS = TRUE ]
 			then
@@ -132,6 +142,7 @@ that this is a brand new installation of Arch Linux, Manjaro Linux, or Anarchy L
 	esac
 done
 echo "Setting the installation of wallpapers to $WALLPAPER" >> $CARBHOME/log
+echo "Setting the installation of ZSH to $ZSHINST" >> $CARBHOME/log
 echo "Setting the installation of display manager to $DM" >> $CARBHOME/log
 echo "Setting the installation of tiling desktop to $I3" >> $CARBHOME/log
 clear
@@ -143,7 +154,7 @@ then
 		if [ $I3 = TRUE ] || [ $DM =TRUE ]
 		then
 			printf "Enter root password\n"
-			su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
+			su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new"
 		else
 			printf "Enter root password\n"
 		fi
@@ -161,16 +172,23 @@ then
 fi
 if [ $DM = TRUE ]
 then
-	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
+	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" 
 	echo -e "${YELLOW}Installing Simple Display Desktop Mnaager" | tee -a $CARBHOME/log && sleep 1
 	sudo pacman -S --noconfirm sddm && sudo systemctl enable sddm || errorhandler "There was an error installing SDDM, do you already have a Display Manager enabled?"
+fi
+if [ $ZSHINST = TRUE ]
+then
+	echo -e "${YELLOW}Installing ZSH" | tee -a $CARBHOME/log
+	[ -n "$(pacman -T sudo)" ] && printf "Installing sudo\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S sudo --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" 
+	pacman -T zsh | xargs -r sudo pacman -S --noconfirm 
+	sudo chsh -s /usr/bin/zsh $USER
 fi
 if [ $I3 = TRUE ]
 then
 	echo -e "${YELLOW}Installing Mandatory Packages" | tee -a $CARBHOME/log && sleep 1
 	printf "These are:\n* compton\n* feh (wallpaper handler)\n* polybar\n* mpd (music player daemon)\n* xorg-xbacklight (screen brightness controller\n* material icons (bar icons)\n* i3-gaps tiling window manager\n\n"
 	sleep 1
-	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" || errorhandler 'Could not install base-devel'
+	[ -n "$(pacman -T sudo)" ] && printf "Installing base-devel\n\nPlease enter root password\n" && su -c "pacman -Sy && pacman -S base-devel --noconfirm && printf '$UN ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" 
 	if [ $TEST = 0 ] && [ $DM = FALSE ]
 	then
 		sudo pacman -Sy || errorhandler "Could not refresh repository cache, is your keyring up to date? Are you sure you are connected to the internet?"
@@ -254,6 +272,30 @@ then
 			n)
 				break
 				;;
+			*)
+				echo -e "${RED}This is not a valid option"
+				sleep 2
+				;;
+		esac
+	done
+	while :
+	do
+		clear
+		if [$DEFAULTS = FALSE ]
+		then
+			printf "${YELLOW}Should I install zsh?\n(y/n) "
+			read answer
+		else
+			answer=y
+		fi
+		case $answer in
+			y)
+				pacman -T zsh | xargs -r sudo pacman -S --noconfirm || errorhandler 'Could not install Z-shell'
+				cp -f $CARBHOME/dotfiles/.zshrc $HOME/.zshrc && printf "${GREEN}Successfully install Z-Shell RC\n" | tee -a $CARBSHOME/log
+				break
+				;;
+			n)
+				break ;;
 			*)
 				echo -e "${RED}This is not a valid option"
 				sleep 2
