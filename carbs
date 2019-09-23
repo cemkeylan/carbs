@@ -38,6 +38,8 @@ usage: ${0##*/} [options]
     -r <repo url>     Use an alternative dotfiles repo
     -d <location>     Specify another place to install dotfiles
     -n		      Run the script noninteractively
+    -P <filename>     Download progs.csv and exit
+
     -h/--help         Print this help message
 
 CARBS installs a functional desktop environment.
@@ -50,8 +52,9 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
 	exit
 fi
 
-while getopts ':p::d::r:n' flag; do
+while getopts ':p::d::r:n:P:' flag; do
 	case $flag in
+		P) curl -sLo $OPTARG git.ckyln.com/carbs/plain/progs.csv && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs=$OPTARG || die 'Could not find progs.csv file' ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
 		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
