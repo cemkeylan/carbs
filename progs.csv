@@ -17,7 +17,7 @@
 ,ncmpcpp
 ,entr
 ,xautolock
-,compton
+,xcompmgr
 ,zathura
 ,zathura-pdf-mupdf
 ,feh
@@ -28,9 +28,10 @@
 ,xorg-server
 ,xorg-xinit
 ,xorg-xsetroot
-,xorg-xrdb
 ,xorg-xrandr
-,xorg-setxkbmap
+,xorg-xdpyinfo
+,gnome-keyring
+,libgnome-keyring
 y,sxlock-git
 ,qutebrowser
 ,newsboat
