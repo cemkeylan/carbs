@@ -36,6 +36,6 @@ y,sxlock-git
 ,qutebrowser
 ,newsboat
 y,mutt-wizard-git
-g,https://git.ckyln.com/dwm
+g,git://git.ckyln.com/dwm
 ,dmenu
-g,https://git.ckyln.com/st
+g,git://git.ckyln.com/st
