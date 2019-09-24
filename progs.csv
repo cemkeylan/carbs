@@ -37,5 +37,5 @@ y,sxlock-git
 ,newsboat
 y,mutt-wizard-git
 g,https://git.ckyln.com/dwm
-g,https://git.ckyln.com/dmenu
+,dmenu
 g,https://git.ckyln.com/st
