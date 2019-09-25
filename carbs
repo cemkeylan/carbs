@@ -64,7 +64,7 @@ while getopts ':p::d::r:n:P:' flag; do
 	esac
 done
 
-[ -z $dotfiles ] && dotfiles="https://git.ckyln.com/dotfiles"
+[ -z $dotfiles ] && dotfiles="git://git.ckyln.com/dotfiles"
 [ -z $targetdir ] && targetdir="$HOME"
 [ -z $progs ] && curl -sLo /tmp/progs.csv https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && progs="/tmp/progs.csv"
 [ -z $interactive ] && interactive=1
