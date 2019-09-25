@@ -148,7 +148,7 @@ dotfilesinstall() {
 	dir="$(mktemp -d)"
 	git clone $1 $dir/repo
 	cp -rfT $dir/repo $targetdir
-	rm $targetdir/README.md $targetdir/LICENSE $targetdir/.git -rf $targetdir/screenshots
+	rm $targetdir/README* $targetdir/LICENSE $targetdir/.git -rf $targetdir/screenshots
 }
 
 neovimconfig() {
