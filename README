@@ -1,0 +1,52 @@
+CARBS
+=====
+
+Cem's Auto Rice Bootstrapping Script
+
+CARBS installs a fully functional desktop environment.
+
+
+Installation
+------------
+
+Carbs can be installed by typing
+
+bash -c "(curl -L cemkeylan.com/carbs)"
+
+Alternatively, you can clone the repository and simply execute the script.
+
+
+Usage
+-----
+
+carbs [options]
+  -p <progs.csv>      Use an alternative progs.csv file (must be local)
+  -r <repo url>       Use an alternative dotfiles repo
+  -d <location>       Specify another place to install dotfiles
+  -n		      Run the script noninteractively (Requires sudo)
+  -P <filename>       Download progs.csv and exit
+
+  -h/--help	      Print this help message (to the terminal)
+
+
+Requirements
+------------
+
+CARBS work on almost all Arch-based distros (almost all because I did not have 
+the chance try out Parabola), and all architechtures that can run Arch Linux
+
+It is always best to have a fresh install
+
+
+Ideas and Suggestions
+---------------------
+
+If you have problems, or suggestions feel free to send me a mail at cem (at) ckyln dot com <cem@ckyln.com>
+
+
+Known Issues
+------------
+
+On architechtures other than x86_64 and aarch64, there is a problem installing yay, 
+although you can build yay everywhere you can install Go. I am currently trying to make a workaround for that.
+
