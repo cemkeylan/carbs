@@ -47,6 +47,3 @@ If you have problems, or suggestions feel free to send me a mail at cem (at) cky
 Known Issues
 ------------
 
-On architechtures other than x86_64 and aarch64, there is a problem installing yay, 
-although you can build yay everywhere you can install Go. I am currently trying to make a workaround for that.
-
