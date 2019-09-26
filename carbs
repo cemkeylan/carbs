@@ -27,8 +27,6 @@ die() { error "$@"; exit 1; }
 
 [ $EUID = 0 ] && die 'Please run this script without root priviliges'
 
-BASE="$PWD"
-
 usage() {
 	cat <<EOF
 usage: ${0##*/} [options]
@@ -107,8 +105,7 @@ makeinstall() {
 }
 
 installcsv() {\
-	[ -e $BASE/progs.csv ] || curl -Lo $BASE/progs.csv https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv 
-	[ -e $BASE/progs.csv ] || die 'Could not retrieve progs.csv'
+	[ -e $progs ] || die 'Could not retrieve progs.csv'
 	while IFS=, read -r src name
 	do
 		case $src in
