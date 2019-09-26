@@ -54,7 +54,7 @@ fi
 
 while getopts ':p::d::r:n:P:' flag; do
 	case $flag in
-		P) curl -sLo $OPTARG git.ckyln.com/carbs/plain/progs.csv && exit || die 'Could not download progs.csv' ;;
+		P) curl -sLo $OPTARG https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs=$OPTARG || die 'Could not find progs.csv file' ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
 		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
