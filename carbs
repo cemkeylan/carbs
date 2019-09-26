@@ -129,12 +129,21 @@ installcsv() {\
 }
 
 installyay() {\
-	sudo pacman -S --noconfirm --needed base-devel
+	error 'Could not install yay-bin, building from source'
+	cd /tmp
+	dir=$(mktemp -d)
+	cd $dir
+	curl -Lo $dir/PKGBUILD "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=yay"
+	makepkg --noconfirm --ignore-arch -si || die 'Could not install yay'
+}
+
+installyaybin() {\
+	sudo pacman -S --noconfirm --needed base-devel || die 'Could not install base-devel'
 	cd /tmp
 	dir=$(mktemp -d)
 	cd $dir
 	curl -Lo $dir/PKGBUILD "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=yay-bin"
-	makepkg --noconfirm -si || die 'Could not install yay'
+	makepkg --noconfirm -si || installyay
 }
 
 sudouser() {\
@@ -177,7 +186,7 @@ if [ $interactive = 1 ]; then
 	welcomepage
 	sudo -V >/dev/null 2>&1 || sudouser $USER
 fi
-yay -V >/dev/null 2>&1 || installyay
+yay -V >/dev/null 2>&1 || installyaybin
 installcsv
 dotfilesinstall $dotfiles
 nvim -v >/dev/null 2>&1 && neovimconfig || warning 'Not installing nvim plugins'
