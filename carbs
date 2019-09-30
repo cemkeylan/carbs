@@ -37,6 +37,7 @@ usage: ${0##*/} [options]
     -d <location>     Specify another place to install dotfiles
     -n		      Run the script noninteractively
     -P <filename>     Download progs.csv and exit
+    -k <X11-Keymap>    Set X11 Keymap
 
     -h/--help         Print this help message
 
@@ -50,13 +51,14 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
 	exit
 fi
 
-while getopts ':p::d::r:n:P:' flag; do
+while getopts ':p::d::r:n:P::k:' flag; do
 	case $flag in
 		P) curl -sLo $OPTARG https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs=$OPTARG || die 'Could not find progs.csv file' ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
 		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
 		n) sudo -V >/dev/null 2>&1 && interactive=0 || die 'Sudo must be installed in order to have a non interactive installation' ;;
+		k) XK=$OPTARG
 		:) die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
 		?) die '%s: invalid option -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
 	esac
@@ -66,6 +68,7 @@ done
 [ -z $targetdir ] && targetdir="$HOME"
 [ -z $progs ] && curl -sLo /tmp/progs.csv https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && progs="/tmp/progs.csv"
 [ -z $interactive ] && interactive=1
+[ "$interactive" = "0" ] && [ -z $XK ] && XK="us"
 
 welcomepage() {
 	clear
@@ -169,6 +172,19 @@ wallpaperinstall() {
 	git clone https://git.ckyln.com/Wallpapers $targetdir/Pictures/Wallpapers && msg 'Downloaded Wallpapers' || error 'Could not install wallpapers'
 }
 
+keyboardset() {
+	if [ -z $XK ]; then
+		cat <<EOF
+What X11 Keymap are you going to use? (default: us)
+EOF
+		read XK
+		[ -z $XK ] && XK="us"
+	fi
+		cat >$HOME/.config/xkeymap <<EOF
+KEYMAP=$XK
+EOF
+}
+
 finalize() {
 	clear
 	cat <<EOF
@@ -189,4 +205,5 @@ dotfilesinstall $dotfiles
 nvim -v >/dev/null 2>&1 && neovimconfig || warning 'Not installing nvim plugins'
 sudo chsh -s /usr/bin/zsh $USER
 wallpaperinstall
+keyboardset
 finalize
