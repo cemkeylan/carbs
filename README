@@ -57,3 +57,4 @@ If you have problems, or suggestions feel free to send me a mail at cem (at) cky
 Known Issues
 ------------
 
+[Parabola GNU/Linux-Libre OpenRC] There is an issue I am having getting Xorg to run. Getting permission errors even though the user is added to the video group. 
