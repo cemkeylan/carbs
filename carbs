@@ -58,7 +58,7 @@ while getopts ':p::d::r:n:P::k:' flag; do
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
 		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
 		n) sudo -V >/dev/null 2>&1 && interactive=0 || die 'Sudo must be installed in order to have a non interactive installation' ;;
-		k) XK=$OPTARG
+		k) XK=$OPTARG ;;
 		:) die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
 		?) die '%s: invalid option -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
 	esac
