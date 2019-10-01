@@ -169,7 +169,7 @@ neovimconfig() {
 wallpaperinstall() {
 	out ' Installing wallpapers'
 	mkdir -p $targetdir/Pictures
-	git clone https://git.ckyln.com/Wallpapers $targetdir/Pictures/Wallpapers && msg 'Downloaded Wallpapers' || error 'Could not install wallpapers'
+	git clone git://git.ckyln.com/Wallpapers $targetdir/Pictures/Wallpapers && msg 'Downloaded Wallpapers' || error 'Could not install wallpapers'
 }
 
 keyboardset() {
