@@ -188,7 +188,7 @@ EOF
 addusergroups() {
 	groups=(wheel audio video power)
 	for group in $groups; do
-		sudo usermod -a -G $group || error 'Could not add you to the %s group, you might want to do it yourself' "$group"
+		sudo usermod -a -G $group $USER || error 'Could not add you to the %s group, you might want to do it yourself' "$group"
 	done
 }
 
