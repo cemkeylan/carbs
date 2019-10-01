@@ -32,8 +32,18 @@ carbs [options]
 Requirements
 ------------
 
-CARBS work on almost all Arch-based distros (almost all because I did not have 
-the chance try out Parabola), and all architechtures that can run Arch Linux
+CARBS has been successfully tested on these distros:
+
+* Arch Linux
+* Arch Linux 32
+* Arch Linux Arm
+* Manjaro
+* Manjaro 32
+* Manjaro Arm
+* Anarchy Linux
+* Parabola GNU/Linux-Libre Systemd
+* Parabola GNU/Linux-Libre OpenRC
+
 
 It is always best to have a fresh install
 
