@@ -25,6 +25,7 @@ carbs [options]
   -d <location>       Specify another place to install dotfiles
   -n		      Run the script noninteractively (Requires sudo)
   -P <filename>       Download progs.csv and exit
+  -k <X11-Keymap>     Set X11 Keymap
 
   -h/--help	      Print this help message (to the terminal)
 
