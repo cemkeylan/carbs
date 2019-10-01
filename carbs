@@ -148,8 +148,11 @@ basedevel-openrc () {
 }
 
 installyaybin() {\
-	[ -d /etc/init.d ] || basedevel-openrc
-	sudo pacman -S --noconfirm --needed base-devel || die 'Could not install base-devel'
+	if [ -d /etc/init.d ]; then
+		basedevel-openrc
+	else
+		sudo pacman -S --noconfirm --needed base-devel || die 'Could not install base-devel'
+	fi
 	cd /tmp
 	dir=$(mktemp -d)
 	cd $dir
