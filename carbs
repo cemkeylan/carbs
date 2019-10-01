@@ -148,7 +148,7 @@ installyaybin() {\
 
 sudouser() {\
 	warning "You don't seem to have sudo installed\nCarbs will now install sudo and add you\nto sudoers"
-	su -c "pacman -S sudo --noconfirm && \
+	su -c "pacman -Sy && pacman -S sudo --noconfirm && \
 	printf '$1 ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" 
 }
 
@@ -207,6 +207,7 @@ if [ $interactive = 1 ]; then
 	welcomepage
 	sudo -V >/dev/null 2>&1 || sudouser $USER
 fi
+sudo pacman -Sy || die 'Could not refresh pacman db'
 yay -V >/dev/null 2>&1 || installyaybin
 installcsv
 dotfilesinstall $dotfiles
