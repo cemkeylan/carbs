@@ -185,6 +185,12 @@ KEYMAP=$XK
 EOF
 }
 
+addusergroups() {
+	groups=(wheel audio video power)
+	for group in $groups; do
+		sudo usermod -a -G $group || error 'Could not add you to the %s group, you might want to do it yourself' "$group"
+	done
+
 finalize() {
 	clear
 	cat <<EOF
@@ -206,4 +212,5 @@ nvim -v >/dev/null 2>&1 && neovimconfig || warning 'Not installing nvim plugins'
 sudo chsh -s /usr/bin/zsh $USER
 wallpaperinstall
 keyboardset
+addusergroups
 finalize
