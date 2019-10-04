@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ## CARBS, Cem's Auto-Rice Bootstrapping Script
 ## Copyright (C) 2019 Cem Keylan <cem@ckyln.com>
@@ -18,14 +18,14 @@
 
 
 # Messages below are taken from Arch scripts
-out() { printf "$1 $2\n" "${@:3}"; }
-error() { out "==> ERROR:" "$@"; } >&2
-warning() { out "==> WARNING:" "$@"; } >&2
-msg() { out "==>" "$@"; }
-msg2() { out "  ->" "$@";}
+out() { printf "$1\\n"; }
+error() { out "==> ERROR: $@"; } >&2
+warning() { out "==> WARNING: $@"; } >&2
+msg() { out "==> $@"; }
+msg2() { out "  -> $@";}
 die() { error "$@"; exit 1; }
 
-[ $EUID = 0 ] && die 'Please run this script without root priviliges'
+[ $(id -u) = 0 ] && die 'Please run this script without root priviliges'
 
 usage() {
 	cat <<EOF
@@ -54,13 +54,13 @@ fi
 while getopts ':p::d::r:n:P::k:' flag; do
 	case $flag in
 		P) git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > $OPTARG && exit || die 'Could not download progs.csv' ;;
-		p) [ -e $OPTARG ] && progs="$(realpath $OPTARG)" || die 'Could not find progs.csv file' ;;
-		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
-		d) [ -d $OPTARG ] && targetdir="$(realpath $OPTARG)" || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
-		n) sudo -V >/dev/null 2>&1 && interactive=0 || die 'Sudo must be installed in order to have a non interactive installation' ;;
+		p) [ -e $OPTARG ] && progs="$(realpath $OPTARG)" || die "Could not find progs.csv file" ;;
+		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die "Could not find repo" ;;
+		d) [ -d $OPTARG ] && targetdir="$(realpath $OPTARG)" || die "Target location $OPTARG does not exist or is not a directory" ;;
+		n) sudo -V >/dev/null 2>&1 && interactive=0 || die "Sudo must be installed in order to have a non interactive installation" ;;
 		k) XK=$OPTARG ;;
-		:) die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
-		?) die '%s: invalid option -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
+		:) die "${0##*/}: option requires an argument -- $OPTARG" ;;
+		?) die "${0##*/}: invalid option -- $OPTARG" ;;
 	esac
 done
 
@@ -103,8 +103,8 @@ makeinstall() {
 	dir="$(mktemp -d)"
 	git clone $1 $dir || die 'Could not clone git repo'
 	cd $dir
-	make || die 'Could not build %s' "$1"
-	sudo make install || die 'Could not install %s' "$1"
+	make || die "Could not build $1"
+	sudo make install || die "Could not install $1"
 }
 
 installcsv() {\
@@ -113,17 +113,17 @@ installcsv() {\
 	do
 		case $src in
 			y)
-				out 'Installing %s' "$name"
-				yay -S --noconfirm --needed $name >/dev/null || die 'Could not install %s' "$name"
-				msg 'Installed %s' "$name" ;;
+				out "Installing $name"
+				yay -S --noconfirm --needed $name >/dev/null || die "Could not install $name"
+				msg "Installed $name" ;;
 			g)
-				out 'Installing %s' "$name"
-				makeinstall $name || die 'Could not install %s' "$name"
-				msg 'Installed %s' "$name" ;;
+				out "Installing $name"
+				makeinstall $name || die "Could not install $name"
+				msg "Installed $name" ;;
 			*)
-				out 'Installing %s' "$name"
-				sudo pacman -S --noconfirm --needed $name >/dev/null || die 'Could not install %s' "$name"
-				msg 'Installed %s' "$name" ;;
+				out "Installing $name"
+				sudo pacman -S --noconfirm --needed $name >/dev/null || die "Could not install $name"
+				msg "Installed $name" ;;
 		esac
 	done < $progs
 }
@@ -137,19 +137,19 @@ installyay() {\
 	makepkg --noconfirm --ignore-arch -si || die 'Could not install yay'
 }
 
-basedevel-openrc () {
-	ORBDL=(pacman autoconf automake binutils bison fakeroot file findutils flex gawk gcc \
-	gettext grep groff gzip libtool m4 make patch pkgconf sed sudo texinfo util-linux which)
-	for pkg in ${ORBDL[*]}; do
-		out 'Installing %s' "$pkg"
-		sudo pacman -S --noconfirm --needed $pkg >/dev/null || die 'Could not install %s' "$pkg"
-		msg 'Installed %s' "$pkg"
+basedevelopenrc () {
+	ORBDL="pacman autoconf automake binutils bison fakeroot file findutils flex gawk gcc \
+	gettext grep groff gzip libtool m4 make patch pkgconf sed sudo texinfo util-linux which"
+	for pkg in ${ORBDL}; do
+		out "Installing $pkg"
+		sudo pacman -S --noconfirm --needed $pkg >/dev/null || die "Could not install $pkg"
+		msg "Installed $pkg"
 	done
 }
 
 installyaybin() {\
 	if [ -d /etc/init.d ]; then
-		basedevel-openrc
+		basedevelopenrc
 	else
 		sudo pacman -S --noconfirm --needed base-devel || die 'Could not install base-devel'
 	fi
@@ -200,10 +200,10 @@ EOF
 }
 
 addusergroups() {
-	groups=(wheel audio video power)
-	for group in ${groups[*]}; do
-		msg 'Adding user to the %s group' "$group"
-		sudo usermod -a -G $group $USER || error 'Could not add you to the %s group, you might want to do it yourself' "$group"
+	groups="wheel audio video power"
+	for group in ${groups}; do
+		msg "Adding user to the $group group"
+		sudo usermod -a -G $group $USER || error "Could not add you to the $group group, you might want to do it yourself"
 	done
 }
 
