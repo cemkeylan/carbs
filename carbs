@@ -54,9 +54,9 @@ fi
 while getopts ':p::d::r:n:P::k:' flag; do
 	case $flag in
 		P) git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > $OPTARG && exit || die 'Could not download progs.csv' ;;
-		p) [ -e $OPTARG ] && progs=$OPTARG || die 'Could not find progs.csv file' ;;
+		p) [ -e $OPTARG ] && progs="$(realpath $OPTARG)" || die 'Could not find progs.csv file' ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
-		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
+		d) [ -d $OPTARG ] && targetdir="$(realpath $OPTARG)" || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
 		n) sudo -V >/dev/null 2>&1 && interactive=0 || die 'Sudo must be installed in order to have a non interactive installation' ;;
 		k) XK=$OPTARG ;;
 		:) die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG" ;;
