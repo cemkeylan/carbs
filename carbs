@@ -53,7 +53,7 @@ fi
 
 while getopts ':p::d::r:n:P::k:' flag; do
 	case $flag in
-		P) curl -sLo $OPTARG https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && exit || die 'Could not download progs.csv' ;;
+		P) git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > $OPTARG && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs=$OPTARG || die 'Could not find progs.csv file' ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die 'Could not find repo' ;;
 		d) [ -d $OPTARG ] && targetdir=$OPTARG || die 'Target location %s does not exist or is not a directory' "$OPTARG" ;;
@@ -66,7 +66,7 @@ done
 
 [ -z $dotfiles ] && dotfiles="git://git.ckyln.com/dotfiles"
 [ -z $targetdir ] && targetdir="$HOME"
-[ -z $progs ] && curl -sLo /tmp/progs.csv https://raw.githubusercontent.com/cemkeylan/carbs/master/progs.csv && progs="/tmp/progs.csv"
+[ -z $progs ] && git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > /tmp/progs.csv && progs="/tmp/progs.csv"
 [ -z $interactive ] && interactive=1
 [ "$interactive" = "0" ] && [ -z $XK ] && XK="us"
 
