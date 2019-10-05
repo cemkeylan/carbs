@@ -53,7 +53,7 @@ fi
 
 while getopts ':p::d::r:n:P::k:' flag; do
 	case $flag in
-		P) git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > $OPTARG && exit || die 'Could not download progs.csv' ;;
+		P) curl -Lo $OPTARG https://git.ckyln.com/raw/carbs/progs.csv && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs="$(realpath $OPTARG)" || die "Could not find progs.csv file" ;;
 		r) git ls-remote $OPTARG >/dev/null 2>&1 && dotfiles=$OPTARG || die "Could not find repo" ;;
 		d) [ -d $OPTARG ] && targetdir="$(realpath $OPTARG)" || die "Target location $OPTARG does not exist or is not a directory" ;;
@@ -66,7 +66,7 @@ done
 
 [ -z $dotfiles ] && dotfiles="git://git.ckyln.com/dotfiles"
 [ -z $targetdir ] && targetdir="$HOME"
-[ -z $progs ] && touch /tmp/progs.csv && git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > /tmp/progs.csv && progs="/tmp/progs.csv"
+[ -z $progs ] && curl -Lo /tmp/progs.csv https://git.ckyln.com/raw/carbs/progs.csv && progs="/tmp/progs.csv"
 [ -z $interactive ] && interactive=1
 [ "$interactive" = "0" ] && [ -z $XK ] && XK="us"
 
