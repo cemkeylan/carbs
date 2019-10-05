@@ -66,7 +66,7 @@ done
 
 [ -z $dotfiles ] && dotfiles="git://git.ckyln.com/dotfiles"
 [ -z $targetdir ] && targetdir="$HOME"
-[ -z $progs ] && git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > /tmp/progs.csv && progs="/tmp/progs.csv"
+[ -z $progs ] && touch /tmp/progs.csv && git archive --remote=git://git.ckyln.com/carbs.git HEAD progs.csv | tar -xO > /tmp/progs.csv && progs="/tmp/progs.csv"
 [ -z $interactive ] && interactive=1
 [ "$interactive" = "0" ] && [ -z $XK ] && XK="us"
 
