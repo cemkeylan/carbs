@@ -103,7 +103,7 @@ read ans
 makeinstall() {
 	cd /tmp
 	dir="$(mktemp -d)"
-	git clone $1 $dir || die 'Could not clone git repo'
+	git clone --depth 1 $1 $dir || die 'Could not clone git repo'
 	cd $dir
 	make || die "Could not build $1"
 	sudo make install || die "Could not install $1"
@@ -171,7 +171,7 @@ sudouser() {\
 dotfilesinstall() {
 	cd /tmp
 	dir="$(mktemp -d)"
-	git clone $1 $dir/repo
+	git clone --depth 1 $1 $dir/repo
 	cp -rfT $dir/repo $targetdir
 	rm $targetdir/README* $targetdir/LICENSE $targetdir/.git -rf $targetdir/screenshots
 }
@@ -179,7 +179,7 @@ dotfilesinstall() {
 wallpaperinstall() {
 	out ' Installing wallpapers'
 	mkdir -p $targetdir/Pictures
-	git clone git://git.ckyln.com/Wallpapers $targetdir/Pictures/Wallpapers && msg 'Downloaded Wallpapers' || error 'Could not install wallpapers'
+	git clone --depth 1 git://git.ckyln.com/Wallpapers $targetdir/Pictures/Wallpapers && msg 'Downloaded Wallpapers' || error 'Could not install wallpapers'
 }
 
 keyboardset() {
