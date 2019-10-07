@@ -1,0 +1,7 @@
+CARBS post-install scripts
+==========================
+
+These scripts are run after dotfiles and wallpapers
+that are meant to be modular and configurable. There also is
+a template file that can be used to write scripts with simple 
+error handling.

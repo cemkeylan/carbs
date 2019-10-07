@@ -38,6 +38,7 @@ usage: ${0##*/} [options]
     -n		      Run the script noninteractively
     -P <filename>     Download progs.csv and exit
     -k <X11-Keymap>   Set X11 Keymap
+    -s <location>     Use an alternative post-install script directory
 
     -h/--help         Print this help message
 
@@ -51,7 +52,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
 	exit
 fi
 
-while getopts ':p::d::r:n:P::k:' flag; do
+while getopts ':p::d::r:n:P::k::s:' flag; do
 	case $flag in
 		P) curl -Lo $OPTARG https://git.ckyln.com/raw/carbs/progs.csv && exit || die 'Could not download progs.csv' ;;
 		p) [ -e $OPTARG ] && progs="$(realpath $OPTARG)" || die "Could not find progs.csv file" ;;
@@ -59,6 +60,7 @@ while getopts ':p::d::r:n:P::k:' flag; do
 		d) [ -d $OPTARG ] && targetdir="$(realpath $OPTARG)" || die "Target location $OPTARG does not exist or is not a directory" ;;
 		n) sudo -V >/dev/null 2>&1 && interactive=0 || die "Sudo must be installed in order to have a non interactive installation" ;;
 		k) XK=$OPTARG ;;
+		s) [ -d $OPTARG ] && PIDIR="$(realpath $OPTARG)" || die "Could not find post-install directory" ;;
 		:) die "${0##*/}: option requires an argument -- $OPTARG" ;;
 		?) die "${0##*/}: invalid option -- $OPTARG" ;;
 	esac
@@ -174,12 +176,6 @@ dotfilesinstall() {
 	rm $targetdir/README* $targetdir/LICENSE $targetdir/.git -rf $targetdir/screenshots
 }
 
-neovimconfig() {
-	out 'Installing nvim plugins'
-	curl -fLo $targetdir/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || error 'Could not download plug.vim'
-	[ $targetdir = $HOME ] && nvim -c "PlugInstall | :q | :q" && msg 'Installed vim plugs'
-}
-
 wallpaperinstall() {
 	out ' Installing wallpapers'
 	mkdir -p $targetdir/Pictures
@@ -215,6 +211,26 @@ Carbs is finished, it is best to do a reboot
 EOF
 }
 
+postinstall() {
+	out "Starting post-installation"
+	if [ -z "$PIDIR" ]; then
+		cd /tmp
+		DIR="$(mktemp -d)"
+		PIDIR="${DIR}/post-install"
+		git clone git://git.ckyln.com/carbs $DIR >/dev/null
+		out "Cloning CARBS repository for post-installation scripts"
+	fi
+	cd $PIDIR
+	for script in *; do
+		case $script in
+			*.sh) ./${script} $targetdir ;;
+			README) continue ;;
+			template) continue ;;
+			*) warning "$script is not a shell script, not running" ;;
+		esac
+	done
+}
+
 
 
 if [ $interactive = 1 ]; then
@@ -225,9 +241,8 @@ sudo pacman -Sy || die 'Could not refresh pacman db'
 yay -V >/dev/null 2>&1 || installyaybin
 installcsv
 dotfilesinstall $dotfiles
-nvim -v >/dev/null 2>&1 && neovimconfig || warning 'Not installing nvim plugins'
-sudo chsh -s /usr/bin/zsh $USER
 wallpaperinstall
+postinstall
 keyboardset
 addusergroups
 finalize
