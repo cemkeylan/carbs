@@ -1,6 +1,7 @@
 ,git
 ,zsh
 ,rofi
+,notification-daemon
 ,dunst
 ,neovim
 ,unclutter
