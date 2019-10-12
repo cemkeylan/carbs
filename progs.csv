@@ -33,7 +33,7 @@
 ,xorg-xdpyinfo
 ,gnome-keyring
 ,libgnome-keyring
-y,sxlock-git
+g,git://git.ckyln.com/sxlock-carbs.git
 ,qutebrowser
 ,newsboat
 y,mutt-wizard-git
