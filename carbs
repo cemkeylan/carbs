@@ -171,7 +171,7 @@ sudouser() {\
 dotfilesinstall() {
 	cd /tmp
 	dir="$(mktemp -d)"
-	git clone --depth 1 $1 $dir/repo
+	git clone --recursive --depth 1 $1 $dir/repo
 	cp -rfT $dir/repo $targetdir
 	rm $targetdir/README* $targetdir/LICENSE $targetdir/.git -rf $targetdir/screenshots
 }
