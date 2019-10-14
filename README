@@ -11,7 +11,7 @@ Installation
 
 Carbs can be installed by typing
 
-bash -c "(curl -L cemkeylan.com/carbs)"
+  bash -c "(curl -L cemkeylan.com/carbs)"
 
 Alternatively, you can clone the repository and simply execute the script.
 
