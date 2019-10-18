@@ -16,6 +16,7 @@
 ,mpd
 ,mpc
 ,ncmpcpp
+,wget
 ,entr
 ,xautolock
 ,xcompmgr
