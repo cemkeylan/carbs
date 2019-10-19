@@ -39,7 +39,7 @@ g,git://git.ckyln.com/sxlock-carbs.git
 ,newsboat
 y,mutt-wizard-git
 g,git://git.ckyln.com/dwm
-,dmenu
+g,git://git.ckyln.com/dmenu
 g,git://git.ckyln.com/st
 ,zsh-syntax-highlighting
 y,lf-bin
