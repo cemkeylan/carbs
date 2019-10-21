@@ -18,6 +18,7 @@
 ,ncmpcpp
 ,wget
 ,entr
+,vimpager
 ,xautolock
 ,xcompmgr
 ,zathura
