@@ -3,6 +3,7 @@
 ,rofi
 ,notification-daemon
 ,dunst
+,numlockx
 ,neovim
 ,unclutter
 ,polkit-gnome
