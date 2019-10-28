@@ -19,6 +19,7 @@ Alternatively, you can clone the repository and simply execute the script.
 Usage
 -----
 
+```
 carbs [options]
   -p <progs.csv>      Use an alternative progs.csv file (must be local)
   -r <repo url>       Use an alternative dotfiles repo
@@ -28,6 +29,7 @@ carbs [options]
   -k <X11-Keymap>     Set X11 Keymap
 
   -h/--help	      Print this help message (to the terminal)
+```
 
 
 Requirements
