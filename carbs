@@ -119,9 +119,9 @@ installcsv() {\
 				yay -S --noconfirm --needed $name >/dev/null || die "Could not install $name"
 				msg "Installed $name" ;;
 			g)
-				out "Installing $name"
+				out "Installing $(basename $name)"
 				makeinstall $name || die "Could not install $name"
-				msg "Installed $name" ;;
+				msg "Installed $(basename $name)" ;;
 			*)
 				out "Installing $name"
 				sudo pacman -S --noconfirm --needed $name >/dev/null || die "Could not install $name"
