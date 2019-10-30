@@ -35,7 +35,7 @@
 ,xorg-xdpyinfo
 ,gnome-keyring
 ,libgnome-keyring
-g,git://git.ckyln.com/sxlock-carbs.git
+g,git://git.ckyln.com/sxlock-carbs
 ,qutebrowser
 ,newsboat
 y,mutt-wizard-git
