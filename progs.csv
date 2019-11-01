@@ -3,6 +3,7 @@
 ,rofi
 ,notification-daemon
 ,dunst
+,sxhkd
 ,numlockx
 ,neovim
 ,unclutter
