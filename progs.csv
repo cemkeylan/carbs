@@ -29,6 +29,7 @@
 ,sxiv
 ,pulseaudio
 ,pamixer
+,pulsemixer
 ,xorg-xbacklight
 ,xorg-server
 ,xorg-xinit
