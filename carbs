@@ -107,9 +107,6 @@ makeinstall() {
 	cd $dir
 	make || die "Could not build $1"
 	sudo make install || die "Could not install $1"
-	srcdir=$HOME/.local/src/$(basename $1)
-	mkdir -p $srcdir
-	git clone $1 $srcdir
 }
 
 installcsv() {\
