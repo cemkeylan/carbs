@@ -107,7 +107,7 @@ makeinstall() {
 	cd $dir
 	make || die "Could not build $1"
 	sudo make install || die "Could not install $1"
-	printf "$1 - `basename $1`\\n" >> $HOME/.local/carbs/gitrepos
+	printf "$1 - `basename $1`\\n" >> $HOME/.local/share/carbs/gitrepos
 }
 
 installcsv() {\
