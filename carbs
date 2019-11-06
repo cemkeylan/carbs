@@ -107,10 +107,12 @@ makeinstall() {
 	cd $dir
 	make || die "Could not build $1"
 	sudo make install || die "Could not install $1"
+	printf "$1 - `basename $1`\\n" >> $HOME/.local/carbs/gitrepos
 }
 
 installcsv() {\
 	[ -e $progs ] || die 'Could not retrieve progs.csv'
+	mkdir -p $HOME/.local/share/carbs && printf "# This is a list of all packages installed from git\\n\\n" > $HOME/.local/share/carbs/gitrepos
 	while IFS=, read -r src name
 	do
 		case $src in
