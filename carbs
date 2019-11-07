@@ -196,7 +196,7 @@ keyboardset() {
 		XK="$(sed '/^! layout$/,/^ *$/!d;//d' /usr/share/X11/xkb/rules/base.lst | fzf --prompt "What X11 Keymap are you going to use? (default: us) " | awk '{print $1}')"
 		[ -z $XK ] && XK="us"
 	fi
-	printf "XKEYMAP=$XK\\n" > $HOME/.config/xkeymap
+	printf "KEYMAP=$XK\\n" > $HOME/.config/xkeymap
 }
 
 addusergroups() {
