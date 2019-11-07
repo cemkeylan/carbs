@@ -100,6 +100,13 @@ read ans
 [ "$ans" = "y" ] || die 'User exited'
 }
 
+refreshsystem() {
+	out "Refreshing system"
+	sudo pacman -Sy || die "Could not refresh pacman db"
+	sudo pacman -Syu --noconfirm || die "Could not upgrade system"
+	msg "System up to date!"
+}
+
 makeinstall() {
 	cd /tmp
 	dir="$(mktemp -d)"
@@ -239,7 +246,7 @@ if [ $interactive = 1 ]; then
 	welcomepage
 	sudo -V >/dev/null 2>&1 || sudouser $USER
 fi
-sudo pacman -Sy || die 'Could not refresh pacman db'
+refreshsystem
 yay -V >/dev/null 2>&1 || installyaybin
 installcsv
 dotfilesinstall $dotfiles
