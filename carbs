@@ -174,7 +174,7 @@ installyaybin() {\
 sudouser() {\
 	warning "You don't seem to have sudo installed\nCarbs will now install sudo and add you\nto sudoers"
 	su -c "pacman -Sy && pacman -S sudo --noconfirm && \
-	printf '$1 ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/new" 
+	printf '$1 ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/carbs" 
 }
 
 dotfilesinstall() {
