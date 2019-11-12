@@ -114,12 +114,20 @@ makeinstall() {
 	cd $dir
 	make || die "Could not build $1"
 	sudo make install || die "Could not install $1"
-	printf "$1 - `basename $1`\\n" >> $HOME/.local/share/carbs/gitrepos
+}
+
+makelist() {
+	printf "Distribution Programs\\n=====================\\n\\n"
+	grep '^,' $progs | cut -d , -f 2
+	printf "\\nGit Programs\\n============\\n\\n"
+	grep '^g' $progs | cut -d , -f 2
+	printf "\\nYay Programs\\n============\\n\\n"
+	grep '^y' $progs | cut -d , -f 2
 }
 
 installcsv() {\
 	[ -e $progs ] || die 'Could not retrieve progs.csv'
-	mkdir -p $HOME/.local/share/carbs && printf "# This is a list of all packages installed from git\\n\\n" > $HOME/.local/share/carbs/gitrepos
+	mkdir -p $HOME/.local/share/carbs && makelist > $HOME/.local/share/carbs/packages
 	while IFS=, read -r src name
 	do
 		case $src in
