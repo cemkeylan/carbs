@@ -112,8 +112,8 @@ makeinstall() {
 	dir="$(mktemp -d)"
 	git clone --depth 1 $1 $dir || die 'Could not clone git repo'
 	cd $dir
-	make || die "Could not build $1"
-	sudo make install || die "Could not install $1"
+	make 2>/dev/null
+	sudo make install || die "Could not build or install $1"
 }
 
 makelist() {
