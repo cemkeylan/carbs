@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 ## CARBS, Cem's Auto-Rice Bootstrapping Script
 ## Copyright (C) 2019 Cem Keylan <cem@ckyln.com>
