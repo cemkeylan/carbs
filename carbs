@@ -16,6 +16,10 @@
 ##    You should have received a copy of the GNU General Public License
 ##    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# DEFAULT VARIABLES
+DEFCARBS="git://git.ckyln.com/carbs"                  # Default CARBS Repo Location
+DEFPROGS="https://git.ckyln.com/raw/carbs/progs.csv"  # Default PROGS.CSV link
+DEFDOTFILES="git://git.ckyln.com/dotfiles"            # Default Dotfiles Repo Location
 
 # Messages below are taken from Arch scripts
 out() { printf "$1\\n"; }
@@ -55,7 +59,7 @@ fi
 
 while getopts ':p::d::r:n:P::k::s:' flag; do
 	case $flag in
-		P) curl -Lo "$OPTARG" https://git.ckyln.com/raw/carbs/progs.csv && exit || die 'Could not download progs.csv' ;;
+		P) curl -Lo "$OPTARG" "$DEFPROGS" && exit || die 'Could not download progs.csv' ;;
 		p) [ -e "$OPTARG" ] && progs="$(realpath "$OPTARG")" || die "Could not find progs.csv file" ;;
 		r) git ls-remote "$OPTARG" >/dev/null 2>&1 && dotfiles=$OPTARG || die "Could not find repo" ;;
 		d) [ -d "$OPTARG" ] && targetdir="$(realpath "$OPTARG")" || die "Target location $OPTARG does not exist or is not a directory" ;;
@@ -67,9 +71,9 @@ while getopts ':p::d::r:n:P::k::s:' flag; do
 	esac
 done
 
-[ -z "$dotfiles" ] && dotfiles="git://git.ckyln.com/dotfiles"
+[ -z "$dotfiles" ] && dotfiles="$DEFDOTFILES"
 [ -z "$targetdir" ] && targetdir="$HOME"
-[ -z "$progs" ] && curl -Lo /tmp/progs.csv https://git.ckyln.com/raw/carbs/progs.csv && progs="/tmp/progs.csv"
+[ -z "$progs" ] && curl -Lo /tmp/progs.csv "$DEFPROGS" && progs="/tmp/progs.csv"
 [ -z "$interactive" ] && interactive=1
 [ "$interactive" = "0" ] && [ -z "$XK" ] && XK="us"
 
@@ -230,7 +234,7 @@ postinstall() {
 		cd /tmp || fallback "Could not change directory to /tmp"
 		DIR="$(mktemp -d)"
 		PIDIR="${DIR}/post-install"
-		git clone git://git.ckyln.com/carbs "$DIR" >/dev/null
+		git clone "$DEFCARBS" "$DIR" >/dev/null
 		out "Cloning CARBS repository for post-installation scripts"
 	fi
 	cd "$PIDIR" || fallback "Could not change directory to $PIDIR"
