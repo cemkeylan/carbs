@@ -40,12 +40,15 @@
 ,gnome-keyring
 ,libgnome-keyring
 g,git://git.ckyln.com/sxlock-carbs
-,qutebrowser
+,webkit2gtk
+,xorg-xprop
 ,newsboat
 y,mutt-wizard-git
 g,git://git.ckyln.com/dwm
 g,git://git.ckyln.com/dmenu
 g,git://git.ckyln.com/st
+g,git://git.ckyln.com/surf
+g,git://git.ckyln.com/tabbed
 ,zsh-syntax-highlighting
 y,lf-bin
 g,git://git.ckyln.com/slstatus
